@@ -13,7 +13,7 @@ import {
 import "@/lib/env";
 
 const CONTEXT_MENU_ID = "reading-list-save-link";
-const WEB_APP_URL = "http://localhost:5173/dashboard";
+const WEB_APP_URL = "https://reading.sneyderangulo.com";
 const SAVED_URL_CACHE_KEY = "savedUrlCache";
 const SAVED_URL_CACHE_USER_ID_KEY = "savedUrlCacheUserId";
 

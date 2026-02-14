@@ -27,18 +27,32 @@ function toStoredUser(userCredential: UserCredential): StoredUser {
 }
 
 export async function signInWithGoogle(): Promise<StoredUser> {
-  const token = await chrome.identity.getAuthToken({ interactive: true });
+  const accessToken = await new Promise<string>((resolve, reject) => {
+    chrome.identity.getAuthToken({ interactive: true }, (tokenResult) => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        reject(new Error(lastError.message));
+        return;
+      }
+      const token =
+        typeof tokenResult === "string"
+          ? tokenResult
+          : (tokenResult as { token?: string } | null | undefined)?.token;
 
-  if (!token.token) {
-    throw new Error("Failed to get Google auth token");
-  }
+      if (!token) {
+        reject(new Error("Failed to get Google auth token"));
+        return;
+      }
+      resolve(token);
+    });
+  });
 
-  const credential = GoogleAuthProvider.credential(null, token.token);
+  const credential = GoogleAuthProvider.credential(null, accessToken);
   const userCredential = await signInWithCredential(firebaseAuth, credential);
   const user = toStoredUser(userCredential);
 
   await chrome.storage.local.set({
-    [STORAGE_TOKEN_KEY]: token.token,
+  [STORAGE_TOKEN_KEY]: accessToken,
     [STORAGE_USER_KEY]: user,
   });
 
