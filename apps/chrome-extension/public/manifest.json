@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Reading List",
+  "description": "Save and manage bookmarks quickly.",
+  "version": "0.1.0",
+  "permissions": ["tabs", "storage", "identity", "contextMenus", "activeTab"],
+  "host_permissions": [
+    "https://*.googleapis.com/*",
+    "https://*.firebaseio.com/*",
+    "https://*.google.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Reading List",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-unsaved-16.svg",
+      "48": "icons/icon-unsaved-48.svg",
+      "128": "icons/icon-unsaved-128.svg"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon-unsaved-16.svg",
+    "48": "icons/icon-unsaved-48.svg",
+    "128": "icons/icon-unsaved-128.svg"
+  }
+}

@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+
+# build artifacts
+dist
+build
+.turbo
+coverage
+
+# env files
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+pnpm-debug.log*
+
+# OS/editor
+.DS_Store
+.idea
+.vscode
+
+# chrome extension packed builds
+*.crx

@@ -1,0 +1,17 @@
+{
+  "name": "@reading-list/config-typescript",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "type-check": "echo \"No type check needed\"",
+    "build": "echo \"No build step needed\"",
+    "test": "echo \"No tests\"",
+    "clean": "echo \"Nothing to clean\""
+  },
+  "files": [
+    "base.json",
+    "react.json"
+  ]
+}
