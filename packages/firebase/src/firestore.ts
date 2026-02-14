@@ -20,6 +20,11 @@ import { normalizeBookmarkUrl } from "./url";
 const BOOKMARKS_COLLECTION = "bookmarks";
 
 function toBookmark(id: string, data: Record<string, unknown>): Bookmark {
+  const createdAt =
+    data.createdAt instanceof Timestamp ? data.createdAt : Timestamp.now();
+  const archivedAt =
+    data.archivedAt instanceof Timestamp ? data.archivedAt : null;
+
   return {
     id,
     userId: data.userId as string,
@@ -28,8 +33,8 @@ function toBookmark(id: string, data: Record<string, unknown>): Bookmark {
     title: data.title as string,
     favicon: data.favicon as string | undefined,
     description: data.description as string | undefined,
-    createdAt: data.createdAt as Timestamp,
-    archivedAt: (data.archivedAt as Timestamp | null | undefined) ?? null,
+    createdAt,
+    archivedAt,
   };
 }
 

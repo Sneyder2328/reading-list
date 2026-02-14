@@ -19,6 +19,7 @@
     "@tanstack/react-query": "latest",
     "@tanstack/react-router": "latest",
     "clsx": "latest",
+    "lucide-react": "^0.564.0",
     "react": "latest",
     "react-dom": "latest",
     "sonner": "latest",

@@ -46,14 +46,6 @@ export default defineConfig({
               cacheName: "app-shell",
             },
           },
-          {
-            urlPattern: ({ url }) =>
-              url.hostname.includes("firestore.googleapis.com"),
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "firestore-api",
-            },
-          },
         ],
       },
     }),

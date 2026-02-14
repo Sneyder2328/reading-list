@@ -26,5 +26,8 @@
     "tailwindcss": "latest",
     "tsup": "latest",
     "vitest": "latest"
+  },
+  "dependencies": {
+    "lucide-react": "^0.564.0"
   }
 }

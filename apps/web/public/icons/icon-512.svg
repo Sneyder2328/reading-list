@@ -1,7 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#111827" />
-  <path
-    d="M160 94c0-19.882 16.118-36 36-36h120c19.882 0 36 16.118 36 36v310.5c0 17.1-19.5 26.9-33.2 16.7L256 375.7l-62.8 45.5c-13.7 10.2-33.2.4-33.2-16.7V94Z"
-    fill="#60a5fa"
-  />
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="512" height="512" rx="128" fill="url(#g1)" />
+  
+  <g transform="translate(106, 106) scale(0.6)" filter="url(#shadow)">
+    <!-- Book shape -->
+    <path fill="#ffffff" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM96 416c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm320 0H160v-32h256v32zm0-64H160v-32h256v32zm0-64H160v-32h256v32zm0-64H160v-32h256v32zM96 160c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"/>
+  </g>
 </svg>

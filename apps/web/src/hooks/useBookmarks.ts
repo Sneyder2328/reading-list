@@ -15,5 +15,6 @@ export function useBookmarks() {
       }
       return getBookmarks(user.uid);
     },
+    retry: false,
   });
 }
