@@ -1,5 +1,5 @@
 import { Navigate } from "@tanstack/react-router";
-import { BookOpen, Chrome, Loader2, LogIn } from "lucide-react";
+import { BookOpen, Loader2, LogIn } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
