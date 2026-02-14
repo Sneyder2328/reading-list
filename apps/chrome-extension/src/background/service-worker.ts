@@ -33,16 +33,16 @@ function normalizeUrl(url: string): string {
 function getIconPath(isSaved: boolean): chrome.action.TabIconDetails["path"] {
   if (isSaved) {
     return {
-      16: "icons/icon-saved-16.svg",
-      48: "icons/icon-saved-48.svg",
-      128: "icons/icon-saved-128.svg",
+      16: "icons/icon-saved-16.png",
+      48: "icons/icon-saved-48.png",
+      128: "icons/icon-saved-128.png",
     };
   }
 
   return {
-    16: "icons/icon-unsaved-16.svg",
-    48: "icons/icon-unsaved-48.svg",
-    128: "icons/icon-unsaved-128.svg",
+    16: "icons/icon-unsaved-16.png",
+    48: "icons/icon-unsaved-48.png",
+    128: "icons/icon-unsaved-128.png",
   };
 }
 

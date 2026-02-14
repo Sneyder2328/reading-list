@@ -96,6 +96,7 @@ export async function getRecentBookmarks(
   const bookmarksQuery = query(
     bookmarksRef,
     where("userId", "==", userId),
+  where("archivedAt", "==", null),
     orderBy("createdAt", "desc"),
     limit(maxItems),
   );
