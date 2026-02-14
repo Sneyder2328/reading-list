@@ -3,7 +3,6 @@ import {
   getCurrentUser,
   onAuthStateChanged,
   signInWithEmailPassword,
-  signInWithGoogle,
   signUpWithEmailPassword,
   signOut,
 } from "@reading-list/firebase";
@@ -19,7 +18,6 @@ import {
 interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
-  signIn: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -44,9 +42,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     () => ({
       user,
       isLoading,
-      signIn: async () => {
-        await signInWithGoogle();
-      },
       signInWithEmail: async (email, password) => {
         await signInWithEmailPassword(email, password);
       },

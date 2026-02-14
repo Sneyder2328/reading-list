@@ -1,5 +1,5 @@
 import { Navigate } from "@tanstack/react-router";
-import { BookOpen, Loader2, LogIn } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,8 +14,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginPage() {
-  const { isLoading, signIn, signInWithEmail, signUpWithEmail, user } = useAuth();
-  const [isSigningIn, setIsSigningIn] = useState(false);
+  const { isLoading, signInWithEmail, signUpWithEmail, user } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -119,44 +118,6 @@ export function LoginPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-zinc-800" />
-            <span className="text-xs text-zinc-500">or</span>
-            <div className="h-px flex-1 bg-zinc-800" />
-          </div>
-
-          <Button
-            className="w-full gap-2 relative overflow-hidden"
-            disabled={isSigningIn}
-            onClick={async () => {
-              try {
-                setIsSigningIn(true);
-                await signIn();
-                toast.success("Signed in successfully");
-              } catch (error) {
-                toast.error(
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to sign in with Google",
-                );
-              } finally {
-                setIsSigningIn(false);
-              }
-            }}
-          >
-            {isSigningIn ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              <>
-                <LogIn className="h-4 w-4" />
-                Continue with Google
-              </>
-            )}
-            <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
-          </Button>
           <p className="text-xs text-zinc-500">
             By continuing, you agree to use Firebase Authentication for account
             access.
