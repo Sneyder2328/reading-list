@@ -3,7 +3,13 @@
   "name": "Reading List",
   "description": "Save and manage bookmarks quickly.",
   "version": "0.1.0",
-  "permissions": ["tabs", "storage", "identity", "contextMenus", "activeTab"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "identity",
+    "contextMenus",
+    "activeTab"
+  ],
   "host_permissions": [
     "https://*.googleapis.com/*",
     "https://*.firebaseio.com/*",
@@ -15,14 +21,14 @@
   },
   "action": {
     "default_title": "Reading List",
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icons/icon-unsaved-16.svg",
       "48": "icons/icon-unsaved-48.svg",
       "128": "icons/icon-unsaved-128.svg"
     }
   },
-  "options_page": "options.html",
+  "options_page": "src/options/index.html",
   "icons": {
     "16": "icons/icon-unsaved-16.svg",
     "48": "icons/icon-unsaved-48.svg",
