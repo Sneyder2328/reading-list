@@ -1,14 +1,12 @@
 import {
+  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
-  GoogleAuthProvider,
-  signInWithCredential,
   type UserCredential,
 } from "firebase/auth";
 
 import { firebaseAuth } from "./firebase";
 
 const STORAGE_USER_KEY = "authUser";
-const STORAGE_TOKEN_KEY = "authAccessToken";
 
 export interface StoredUser {
   uid: string;
@@ -27,32 +25,23 @@ function toStoredUser(userCredential: UserCredential): StoredUser {
 }
 
 export async function signInWithGoogle(): Promise<StoredUser> {
-  const accessToken = await new Promise<string>((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive: true }, (tokenResult) => {
-      const lastError = chrome.runtime.lastError;
-      if (lastError) {
-        reject(new Error(lastError.message));
-        return;
-      }
-      const token =
-        typeof tokenResult === "string"
-          ? tokenResult
-          : (tokenResult as { token?: string } | null | undefined)?.token;
+  throw new Error(
+    "Google sign-in is not supported in the extension without additional OAuth setup. Use email/password sign-in instead.",
+  );
+}
 
-      if (!token) {
-        reject(new Error("Failed to get Google auth token"));
-        return;
-      }
-      resolve(token);
-    });
-  });
-
-  const credential = GoogleAuthProvider.credential(null, accessToken);
-  const userCredential = await signInWithCredential(firebaseAuth, credential);
+export async function signInWithEmailPassword(
+  email: string,
+  password: string,
+): Promise<StoredUser> {
+  const userCredential = await signInWithEmailAndPassword(
+    firebaseAuth,
+    email,
+    password,
+  );
   const user = toStoredUser(userCredential);
 
   await chrome.storage.local.set({
-  [STORAGE_TOKEN_KEY]: accessToken,
     [STORAGE_USER_KEY]: user,
   });
 
@@ -65,13 +54,6 @@ export async function getStoredUser(): Promise<StoredUser | null> {
 }
 
 export async function signOut(): Promise<void> {
-  const tokenResult = await chrome.storage.local.get(STORAGE_TOKEN_KEY);
-  const accessToken = tokenResult[STORAGE_TOKEN_KEY] as string | undefined;
-
-  if (accessToken) {
-    await chrome.identity.removeCachedAuthToken({ token: accessToken });
-  }
-
   await firebaseSignOut(firebaseAuth);
-  await chrome.storage.local.remove([STORAGE_TOKEN_KEY, STORAGE_USER_KEY]);
+  await chrome.storage.local.remove([STORAGE_USER_KEY]);
 }

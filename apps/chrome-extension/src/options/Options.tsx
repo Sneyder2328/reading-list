@@ -84,12 +84,14 @@ export function Options() {
               <button
                 className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-400"
                 onClick={async () => {
-                  await chrome.runtime.sendMessage({ type: "SIGN_IN" });
-                  await refresh();
+                  await chrome.runtime.sendMessage({
+                    type: "OPEN_WEB_APP",
+                    path: "/login",
+                  });
                 }}
                 type="button"
               >
-                Sign in with Google
+                Sign in
               </button>
             </div>
           )}

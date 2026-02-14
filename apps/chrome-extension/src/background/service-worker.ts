@@ -1,6 +1,6 @@
 import {
   getStoredUser,
-  signInWithGoogle,
+  signInWithEmailPassword,
   signOut as signOutFromExtension,
 } from "@/lib/auth";
 import {
@@ -238,8 +238,17 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       return { ok: true };
     }
 
-    if (message.type === "SIGN_IN") {
-      const user = await signInWithGoogle();
+    if (message.type === "SIGN_IN_EMAIL_PASSWORD") {
+      const { email, password } = message as {
+        email?: unknown;
+        password?: unknown;
+      };
+
+      if (typeof email !== "string" || typeof password !== "string") {
+        return { ok: false, error: "Email and password are required" };
+      }
+
+      const user = await signInWithEmailPassword(email, password);
       await refreshCacheFromFirestore(user.uid);
       return { ok: true, payload: user };
     }
@@ -256,7 +265,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     }
 
     if (message.type === "OPEN_WEB_APP") {
-      await chrome.tabs.create({ url: WEB_APP_URL });
+      const path =
+        typeof (message as { path?: unknown }).path === "string"
+          ? (message as { path: string }).path
+          : "";
+      const url = new URL(path, WEB_APP_URL).toString();
+      await chrome.tabs.create({ url });
       return { ok: true };
     }
 

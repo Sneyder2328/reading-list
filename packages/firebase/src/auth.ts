@@ -1,6 +1,8 @@
 import {
+  createUserWithEmailAndPassword,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   signOut as firebaseSignOut,
+  signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   type User,
@@ -27,6 +29,32 @@ export async function signInWithGoogle(): Promise<AuthUser> {
 
 export async function signOut(): Promise<void> {
   await firebaseSignOut(firebaseAuth);
+}
+
+export async function signInWithEmailPassword(
+  email: string,
+  password: string,
+): Promise<AuthUser> {
+  const credential = await signInWithEmailAndPassword(
+    firebaseAuth,
+    email,
+    password,
+  );
+
+  return toAuthUser(credential.user);
+}
+
+export async function signUpWithEmailPassword(
+  email: string,
+  password: string,
+): Promise<AuthUser> {
+  const credential = await createUserWithEmailAndPassword(
+    firebaseAuth,
+    email,
+    password,
+  );
+
+  return toAuthUser(credential.user);
 }
 
 export function getCurrentUser(): AuthUser | null {

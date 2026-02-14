@@ -2,7 +2,9 @@ export { firebaseApp, firebaseAuth, firebaseDb } from "./app";
 export {
   getCurrentUser,
   onAuthStateChanged,
+  signInWithEmailPassword,
   signInWithGoogle,
+  signUpWithEmailPassword,
   signOut,
 } from "./auth";
 export { getFirebaseConfig } from "./config";

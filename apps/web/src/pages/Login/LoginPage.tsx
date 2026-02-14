@@ -1,4 +1,4 @@
-import { Link, Navigate } from "@tanstack/react-router";
+import { Navigate } from "@tanstack/react-router";
 import { BookOpen, Chrome, Loader2, LogIn } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,8 +14,12 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginPage() {
-  const { isLoading, signIn, user } = useAuth();
+  const { isLoading, signIn, signInWithEmail, signUpWithEmail, user } = useAuth();
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isEmailAuthLoading, setIsEmailAuthLoading] = useState(false);
 
   if (!isLoading && user) {
     return <Navigate to="/dashboard" />;
@@ -31,11 +35,96 @@ export function LoginPage() {
           </div>
           <CardTitle className="text-xl">Welcome to Reading List</CardTitle>
           <CardDescription>
-            Sign in with Google to sync bookmarks across the extension and web
-            app.
+            Sign in to sync bookmarks across the extension and web app.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={() => setMode("signin")}
+                type="button"
+                variant={mode === "signin" ? "default" : "secondary"}
+              >
+                Sign in
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => setMode("signup")}
+                type="button"
+                variant={mode === "signup" ? "default" : "secondary"}
+              >
+                Sign up
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <input
+                className="w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Email"
+                type="email"
+                value={email}
+              />
+              <input
+                className="w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Password"
+                type="password"
+                value={password}
+              />
+
+              <Button
+                className="w-full"
+                disabled={
+                  isEmailAuthLoading || email.length === 0 || password.length < 6
+                }
+                onClick={async () => {
+                  try {
+                    setIsEmailAuthLoading(true);
+                    if (mode === "signin") {
+                      await signInWithEmail(email, password);
+                      toast.success("Signed in successfully");
+                    } else {
+                      await signUpWithEmail(email, password);
+                      toast.success("Account created");
+                    }
+                  } catch (error) {
+                    toast.error(
+                      error instanceof Error
+                        ? error.message
+                        : mode === "signin"
+                          ? "Failed to sign in"
+                          : "Failed to create account",
+                    );
+                  } finally {
+                    setIsEmailAuthLoading(false);
+                  }
+                }}
+                type="button"
+              >
+                {isEmailAuthLoading
+                  ? mode === "signin"
+                    ? "Signing in..."
+                    : "Creating account..."
+                  : mode === "signin"
+                    ? "Continue"
+                    : "Create account"}
+              </Button>
+
+              <p className="text-xs text-zinc-500">
+                Passwords must be at least 6 characters.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-zinc-800" />
+            <span className="text-xs text-zinc-500">or</span>
+            <div className="h-px flex-1 bg-zinc-800" />
+          </div>
+
           <Button
             className="w-full gap-2 relative overflow-hidden"
             disabled={isSigningIn}
@@ -72,12 +161,6 @@ export function LoginPage() {
             By continuing, you agree to use Firebase Authentication for account
             access.
           </p>
-          <Link
-            className="text-xs text-blue-300 hover:underline"
-            to="/dashboard"
-          >
-            Continue as-is (requires active auth session)
-          </Link>
         </CardContent>
       </Card>
     </main>

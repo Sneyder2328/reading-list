@@ -50,6 +50,9 @@ export function Popup() {
   const [state, setState] = useState<PopupState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
 
   const items = useMemo<BookmarkItemData[]>(
     () =>
@@ -141,24 +144,70 @@ export function Popup() {
               <button
                 className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-100 hover:bg-zinc-700"
                 onClick={async () => {
-                  await sendMessage({ type: "SIGN_OUT" });
-                  await loadState();
+                  await sendMessage({ type: "OPEN_WEB_APP", path: "/logout" });
                 }}
                 type="button"
               >
                 Sign Out
               </button>
             ) : (
-              <button
-                className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-100 hover:bg-zinc-700"
-                onClick={async () => {
-                  await sendMessage({ type: "SIGN_IN" });
-                  await loadState();
-                }}
-                type="button"
-              >
-                Sign In
-              </button>
+              <div className="flex w-full flex-col gap-2">
+                <div className="grid grid-cols-1 gap-2">
+                  <input
+                    className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs text-zinc-100 placeholder:text-zinc-500"
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="Email"
+                    type="email"
+                    value={email}
+                  />
+                  <input
+                    className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs text-zinc-100 placeholder:text-zinc-500"
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="Password"
+                    type="password"
+                    value={password}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    className="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={authLoading || email.length === 0 || password.length === 0}
+                    onClick={async () => {
+                      try {
+                        setAuthLoading(true);
+                        setError(null);
+                        await sendMessage({
+                          type: "SIGN_IN_EMAIL_PASSWORD",
+                          email,
+                          password,
+                        });
+                        setPassword("");
+                        await loadState();
+                      } catch (authError) {
+                        setError(
+                          authError instanceof Error
+                            ? authError.message
+                            : "Failed to sign in",
+                        );
+                      } finally {
+                        setAuthLoading(false);
+                      }
+                    }}
+                    type="button"
+                  >
+                    {authLoading ? "Signing in..." : "Sign In"}
+                  </button>
+                  <button
+                    className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-100 hover:bg-zinc-700"
+                    onClick={async () => {
+                      await sendMessage({ type: "OPEN_WEB_APP", path: "/login" });
+                    }}
+                    type="button"
+                  >
+                    Use web login
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </section>
