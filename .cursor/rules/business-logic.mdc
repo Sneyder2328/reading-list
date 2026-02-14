@@ -1,0 +1,92 @@
+---
+description: Reading List business logic and domain rules
+globs: apps/**/*.ts,apps/**/*.tsx,packages/**/*.ts
+alwaysApply: false
+---
+
+# Reading List Business Logic
+
+## Core Domain
+
+This is a bookmark manager platform with:
+- **Chrome Extension**: One-click save/unsave URLs from browser toolbar
+- **PWA**: Full bookmark management (view, archive, delete)
+- **Firebase**: Direct Firestore access (no backend server needed)
+
+## Bookmark States
+
+A bookmark can be in one of these states:
+- **Active**: Visible in the main list, not archived
+- **Archived**: Hidden from main list, can be restored or permanently deleted
+
+## Data Model
+
+```typescript
+interface Bookmark {
+  id: string
+  userId: string       // Firebase Auth UID
+  url: string          // The saved URL (unique per user)
+  title: string        // Page title at save time
+  favicon?: string     // Favicon URL
+  description?: string // Optional user note or meta description
+  createdAt: Date
+  archivedAt?: Date | null  // null = active, Date = archived
+}
+```
+
+## Business Rules
+
+### URL Uniqueness
+- Each user can only save a URL once
+- If user tries to save an already-saved URL, toggle behavior applies (unsave it)
+- URLs should be normalized before comparison (remove trailing slashes, etc.)
+
+### Archive vs Delete
+- **Archive**: Soft-hide, can be restored anytime
+- **Delete**: Permanent removal, cannot be undone
+
+### Chrome Extension Behavior
+- Clicking toolbar icon toggles save state for current tab URL
+- Icon appearance reflects save state (filled = saved, outline = not saved)
+- Extension queries Firestore to check URL status on tab change
+
+### Authentication
+- All bookmarks are user-scoped via Firebase Auth
+- Unauthenticated users should be prompted to sign in
+- Firestore Security Rules enforce user isolation
+
+## Firestore Design
+
+### Collection Structure
+```
+bookmarks/
+  {bookmarkId}/
+    userId: string
+    url: string
+    title: string
+    favicon?: string
+    createdAt: Timestamp
+    archivedAt?: Timestamp | null
+```
+
+### Security Rules
+```javascript
+match /bookmarks/{bookmarkId} {
+  allow read, write: if request.auth != null 
+    && request.auth.uid == resource.data.userId;
+  allow create: if request.auth != null 
+    && request.auth.uid == request.resource.data.userId;
+}
+```
+
+### Common Operations
+```typescript
+// packages/firebase/src/firestore.ts
+getBookmarks(userId)           // Active bookmarks (archivedAt == null)
+getArchivedBookmarks(userId)   // Archived bookmarks (archivedAt != null)
+isUrlSaved(userId, url)        // Check if URL exists
+toggleBookmark(userId, url, data) // Save or unsave
+archiveBookmark(bookmarkId)    // Set archivedAt to now
+unarchiveBookmark(bookmarkId)  // Set archivedAt to null
+deleteBookmark(bookmarkId)     // Permanent delete
+```

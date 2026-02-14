@@ -1,0 +1,71 @@
+---
+description: Keep route files minimal by moving logic to page components
+globs: apps/web/src/routes/**/*.tsx
+alwaysApply: false
+---
+
+# Route File Structure Guidelines
+
+Route files should be minimal and only handle route definition. All page logic and UI should live in dedicated page components.
+
+## Rules
+
+1. **Route files should be minimal (5-10 lines)**
+   - Only import and export the route definition
+   - Use lazy loading with `createLazyFileRoute`
+   - Import page components from `src/pages/`
+
+2. **Move all logic to page components**
+   - Page state and hooks belong in `src/pages/FeatureName/`
+   - Auth guards and redirects belong in page components
+   - Loading states belong in page components
+
+3. **Page component organization**
+   ```
+   src/pages/
+     Dashboard/
+       index.tsx           # Main page component (DashboardPage)
+       components/         # Page-specific components
+         index.ts          # Barrel export
+         BookmarkFilters.tsx
+       hooks/              # Page-specific hooks
+         useBookmarkFilters.ts
+     Archive/
+       index.tsx           # ArchivePage
+       components/
+         ArchivedBookmarkList.tsx
+   ```
+
+4. **Examples**
+
+```tsx
+// Good - Minimal route file
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { DashboardPage } from '../../pages/Dashboard'
+
+export const Route = createLazyFileRoute('/dashboard/')({
+  component: DashboardPage,
+})
+```
+
+```tsx
+// Bad - Logic in route file
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+
+function DashboardPage() {
+  const [bookmarks, setBookmarks] = useState(null)
+  // ... 100+ lines of logic and JSX
+}
+
+export const Route = createLazyFileRoute('/dashboard/')({
+  component: DashboardPage,
+})
+```
+
+5. **Benefits**
+   - Cleaner separation of concerns
+   - Easier testing of page components
+   - Better code organization and discoverability
+   - Consistent patterns across the codebase
+   - Route files focus solely on routing configuration

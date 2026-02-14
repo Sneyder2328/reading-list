@@ -1,0 +1,138 @@
+---
+description: Chrome extension development patterns and guidelines
+globs: apps/chrome-extension/**/*.ts,apps/chrome-extension/**/*.tsx
+alwaysApply: false
+---
+
+# Chrome Extension Guidelines
+
+## Manifest V3
+
+This extension uses Manifest V3. Key differences from V2:
+- Service workers instead of background pages
+- `chrome.action` instead of `chrome.browserAction`
+- Declarative Net Request instead of webRequest (if needed)
+
+## Architecture
+
+```
+apps/chrome-extension/
+├── src/
+│   ├── background/
+│   │   └── service-worker.ts    # Background logic, icon updates
+│   ├── popup/
+│   │   ├── Popup.tsx            # Main popup UI
+│   │   └── index.tsx            # Entry point
+│   └── options/
+│       └── Options.tsx          # Settings page with auth
+├── public/
+│   ├── manifest.json
+│   └── icons/
+│       ├── icon-saved-16.png
+│       ├── icon-saved-48.png
+│       ├── icon-saved-128.png
+│       ├── icon-unsaved-16.png
+│       ├── icon-unsaved-48.png
+│       └── icon-unsaved-128.png
+```
+
+## Icon State Management
+
+The toolbar icon must reflect whether the current tab's URL is saved:
+
+```typescript
+// Update icon based on save state
+async function updateIcon(tabId: number, isSaved: boolean) {
+  const iconPath = isSaved 
+    ? {
+        16: 'icons/icon-saved-16.png',
+        48: 'icons/icon-saved-48.png',
+        128: 'icons/icon-saved-128.png',
+      }
+    : {
+        16: 'icons/icon-unsaved-16.png',
+        48: 'icons/icon-unsaved-48.png',
+        128: 'icons/icon-unsaved-128.png',
+      }
+  
+  await chrome.action.setIcon({ tabId, path: iconPath })
+}
+```
+
+## Event Listeners
+
+Update icon on these events:
+- `chrome.tabs.onActivated` - User switches tabs
+- `chrome.tabs.onUpdated` - URL changes in current tab
+- After save/unsave action completes
+
+```typescript
+// Service worker setup
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  const tab = await chrome.tabs.get(activeInfo.tabId)
+  if (tab.url) {
+    const isSaved = await checkIfUrlSaved(tab.url)
+    updateIcon(activeInfo.tabId, isSaved)
+  }
+})
+
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.url && tab.active) {
+    const isSaved = await checkIfUrlSaved(changeInfo.url)
+    updateIcon(tabId, isSaved)
+  }
+})
+```
+
+## Firebase Auth in Extension
+
+Use `chrome.identity` API for Google OAuth:
+
+```typescript
+async function signInWithGoogle() {
+  const authUrl = `https://accounts.google.com/o/oauth2/auth?...`
+  
+  const redirectUrl = await chrome.identity.launchWebAuthFlow({
+    url: authUrl,
+    interactive: true,
+  })
+  
+  // Extract token from redirect URL and exchange with Firebase
+}
+```
+
+Store tokens securely:
+```typescript
+// Store auth state
+await chrome.storage.local.set({ 
+  firebaseToken: idToken,
+  user: { uid, email, displayName }
+})
+
+// Retrieve auth state
+const { firebaseToken, user } = await chrome.storage.local.get(['firebaseToken', 'user'])
+```
+
+## Message Passing
+
+For communication between popup/options and service worker:
+
+```typescript
+// From popup
+chrome.runtime.sendMessage({ type: 'TOGGLE_BOOKMARK', url, title })
+
+// In service worker
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'TOGGLE_BOOKMARK') {
+    toggleBookmark(message.url, message.title)
+      .then(result => sendResponse(result))
+    return true // Keep channel open for async response
+  }
+})
+```
+
+## Performance
+
+- Cache saved URLs locally for instant icon updates
+- Sync cache with server periodically or on meaningful events
+- Minimize API calls from service worker

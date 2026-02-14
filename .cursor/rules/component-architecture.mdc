@@ -1,0 +1,50 @@
+---
+description: Component architecture rules for React TSX files in web and chrome-extension apps
+globs: apps/web/src/**/*.tsx,apps/chrome-extension/src/**/*.tsx
+alwaysApply: false
+---
+
+# Component Architecture
+
+## File Size Limit
+
+Component definition files **must not exceed 300 lines of code**. If a component grows beyond this limit, break it down into smaller sub-components.
+
+## Reuse Before Creating
+
+Before creating a new component, **always search for existing components** that can be reused or extended:
+
+1. Check `components/ui/` for base UI primitives (Button, Badge, Card, Input, etc.)
+2. Check `components/` for shared application-level components
+3. Check `packages/ui/` for shared components across apps
+4. Check sibling `components/` folders near the current page for domain-specific components
+
+Only create a new component when no existing one covers the need.
+
+## Atomic Component Design
+
+Follow an atomic design approach when structuring components:
+
+- **Atoms**: Small, single-responsibility UI elements (avatar, badge, button, input). Place in `components/ui/` or `packages/ui/`.
+- **Molecules**: Compositions of atoms that form a reusable unit (BookmarkItem, BookmarkActions). Place in `components/` if shared, or in a local `components/` folder near the page if page-specific.
+- **Organisms / Pages**: Larger compositions that combine molecules and atoms to build a full feature or page. These live in `pages/`.
+
+```
+components/
+  ui/              # Atoms: Badge, Button, Card, Input …
+  BookmarkItem.tsx # Shared molecules
+  BookmarkList.tsx
+pages/
+  Dashboard/
+    DashboardPage.tsx           # Page (orchestrates everything)
+    components/
+      BookmarkFilters.tsx       # Molecule (page-specific)
+      BookmarkStats.tsx         # Molecule (page-specific)
+```
+
+## Principles
+
+- **Single Responsibility**: Each component does one thing well.
+- **Props over internal queries**: Prefer passing data via props so components stay testable and reusable. Keep data fetching and mutations at the page level.
+- **Co-location**: Page-specific components live in a `components/` folder next to their page. Shared components live in `src/components/`.
+- **Flat exports**: Avoid deep nesting. One component per file.
