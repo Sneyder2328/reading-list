@@ -4,8 +4,8 @@ export {
   onAuthStateChanged,
   signInWithEmailPassword,
   signInWithGoogle,
-  signUpWithEmailPassword,
   signOut,
+  signUpWithEmailPassword,
 } from "./auth";
 export { getFirebaseConfig } from "./config";
 

@@ -2,8 +2,8 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   signOut as firebaseSignOut,
-  signInWithEmailAndPassword,
   GoogleAuthProvider,
+  signInWithEmailAndPassword,
   signInWithPopup,
   type User,
 } from "firebase/auth";

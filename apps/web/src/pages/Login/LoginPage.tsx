@@ -77,7 +77,9 @@ export function LoginPage() {
               <Button
                 className="w-full"
                 disabled={
-                  isEmailAuthLoading || email.length === 0 || password.length < 6
+                  isEmailAuthLoading ||
+                  email.length === 0 ||
+                  password.length < 6
                 }
                 onClick={async () => {
                   try {

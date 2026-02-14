@@ -1,6 +1,6 @@
 import {
-  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
+  signInWithEmailAndPassword,
   type UserCredential,
 } from "firebase/auth";
 

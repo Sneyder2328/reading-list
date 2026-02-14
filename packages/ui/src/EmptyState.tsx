@@ -6,7 +6,11 @@ interface EmptyStateProps {
   icon?: LucideIcon;
 }
 
-export function EmptyState({ title, description, icon: Icon }: EmptyStateProps) {
+export function EmptyState({
+  title,
+  description,
+  icon: Icon,
+}: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 p-12 text-center animate-in fade-in zoom-in duration-500">
       {Icon ? (

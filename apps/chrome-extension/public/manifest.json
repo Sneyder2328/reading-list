@@ -3,12 +3,7 @@
   "name": "Reading List",
   "description": "Save and manage bookmarks quickly.",
   "version": "0.1.0",
-  "permissions": [
-    "tabs",
-    "storage",
-    "contextMenus",
-    "activeTab"
-  ],
+  "permissions": ["tabs", "storage", "contextMenus", "activeTab"],
   "host_permissions": [
     "https://*.googleapis.com/*",
     "https://*.firebaseio.com/*",

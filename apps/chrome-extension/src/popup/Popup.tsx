@@ -171,7 +171,9 @@ export function Popup() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     className="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={authLoading || email.length === 0 || password.length === 0}
+                    disabled={
+                      authLoading || email.length === 0 || password.length === 0
+                    }
                     onClick={async () => {
                       try {
                         setAuthLoading(true);
@@ -200,7 +202,10 @@ export function Popup() {
                   <button
                     className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-100 hover:bg-zinc-700"
                     onClick={async () => {
-                      await sendMessage({ type: "OPEN_WEB_APP", path: "/login" });
+                      await sendMessage({
+                        type: "OPEN_WEB_APP",
+                        path: "/login",
+                      });
                     }}
                     type="button"
                   >

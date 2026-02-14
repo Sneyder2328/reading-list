@@ -3,8 +3,8 @@ import {
   getCurrentUser,
   onAuthStateChanged,
   signInWithEmailPassword,
-  signUpWithEmailPassword,
   signOut,
+  signUpWithEmailPassword,
 } from "@reading-list/firebase";
 import {
   createContext,
